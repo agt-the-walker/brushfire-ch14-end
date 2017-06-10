@@ -30,6 +30,10 @@ module.exports = {
   session: {
     adapter: 'redis',
     url: process.env.REDISTOGO_URL
+  },
+  sockets: {
+    adapter: 'socket.io-redis',
+    url: process.env.REDISTOGO_URL,
   }
 
   /***************************************************************************
