@@ -80,13 +80,8 @@ module.exports.connections = {
     user: 'YOUR_POSTGRES_USER',
     password: 'YOUR_POSTGRES_PASSWORD',
     database: 'YOUR_POSTGRES_DB'
-  },
-
-  productionPostgresqlServer: {
-    adapter: 'sails-postgresql',
-    url: process.env.DATABASE_URL,
-    ssl: true
   }
+
 
   /***************************************************************************
   *                                                                          *
