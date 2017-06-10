@@ -37,6 +37,7 @@
   },
   "scripts": {
     "debug": "node debug app.js",
+    "postinstall": "grunt",
     "start": "node app.js"
   },
   "main": "app.js",
