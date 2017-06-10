@@ -41,7 +41,7 @@
   },
   "scripts": {
     "debug": "node debug app.js",
-    "postinstall": "grunt",
+    "postinstall": "grunt prod",
     "start": "node app.js"
   },
   "main": "app.js",
