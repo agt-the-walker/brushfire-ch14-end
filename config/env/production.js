@@ -26,6 +26,10 @@ module.exports = {
       url: process.env.DATABASE_URL,
       ssl: true
     }
+  },
+  session: {
+    adapter: 'redis',
+    url: process.env.REDISTOGO_URL
   }
 
   /***************************************************************************
