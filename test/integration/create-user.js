@@ -31,3 +31,60 @@ describe('User Controller :: ', function() {
     });
   });
 });
+
+describe('When logged out ::', function() {
+  describe('With an invalid email address', function() {
+    it('should return a 400 status code when missing', function(done) {
+      request(sails.hooks.http.app)
+      .post('/user/signup')
+      .send({
+        username: 'foo',
+        password: 'barbaz'
+      })
+      .set('Content-Type', 'application/json')
+      .end(function(err, res) {
+        if(err) { return done(err); }
+        assert.equal(res.statusCode, 400);
+        return done();
+      });
+    });
+  });
+
+  describe('With valid properties', function() {
+    var userResponse;
+
+    before(function(done) {
+      request(sails.hooks.http.app)
+      .post('/user/signup')
+      .send({
+        username: 'foofoo',
+        password: 'barbaz',
+        email: 'foo.bar@baz.com'
+      })
+      .set('Content-Type', 'application/json')
+      .end(function(err, res) {
+        if(err) { return done(err); }
+        userResponse = res;
+        done();
+      });
+    });
+
+    it('should return a 200 response code', function() {
+      assert.equal(userResponse.statusCode, 200);
+    });
+
+    it('should return the username of the user in the body', function() {
+      assert.equal(userResponse.body.username, 'foofoo');
+    });
+
+    it('should set the gravatar on the user record', function(done) {
+      User.findOne({ username: 'foofoo' }).exec(function(err, user) {
+        if(err) { return done(err); }
+        assert(user);
+        assert(user.gravatarURL);
+        assert.notEqual(user.gravatarURL, '');
+        done();
+      });
+    });
+  });
+});
