@@ -46,10 +46,12 @@
     <%- body %>
 
     <!--TEMPLATES-->
-    
+
     <!--TEMPLATES END-->
+    <script src="/js/dependencies/sails.io.js"
+            headers='{"x-csrf-token":<%- typeof _csrf !== 'undefined' ? JSON.stringify(_csrf) : 'null' %>}'>
+    </script>
     <!--SCRIPTS-->
-    <script src="/js/dependencies/sails.io.js"></script>
     <script src="/js/dependencies/angular.js"></script>
     <script src="/js/dependencies/jquery.min.js"></script>
     <script src="/js/dependencies/lodash.js"></script>
@@ -82,6 +84,11 @@
     <script src="/js/controllers/tutorialsDetailVideoEditPageController.js"></script>
     <script src="/js/controllers/tutorialsDetailVideoNewPageController.js"></script>
     <!--SCRIPTS END-->
+    <script type="text/javascript">
+      io.sails.headers = {
+        'x-csrf-token': window.SAILS_LOCALS._csrf
+      }
+    </script>
   </div>
 </body>
 </html>
