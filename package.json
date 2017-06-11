@@ -42,7 +42,8 @@
   "scripts": {
     "debug": "node debug app.js",
     "postinstall": "grunt prod",
-    "start": "node app.js"
+    "start": "node app.js",
+    "test": "NODE_ENV=test mocha --recursive -t 5000"
   },
   "main": "app.js",
   "repository": {
