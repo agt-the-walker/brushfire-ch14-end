@@ -110,14 +110,14 @@ module.exports = {
         if (!foundTutorials) return res.notFound();
 
         /*
-          _____                     __                      
-         |_   _| __ __ _ _ __  ___ / _| ___  _ __ _ __ ___  
-           | || '__/ _` | '_ \/ __| |_ / _ \| '__| '_ ` _ \ 
+          _____                     __
+         |_   _| __ __ _ _ __  ___ / _| ___  _ __ _ __ ___
+           | || '__/ _` | '_ \/ __| |_ / _ \| '__| '_ ` _ \
            | || | | (_| | | | \__ \  _| (_) | |  | | | | | |
            |_||_|  \__,_|_| |_|___/_|  \___/|_|  |_| |_| |_|
-                                                  
+
          */
-        
+
         _.each(foundTutorials, function(tutorial){
 
           // sync owner
@@ -132,7 +132,7 @@ module.exports = {
 
             // Total the number of seconds for all videos for tutorial total time
             totalSeconds = totalSeconds + video.lengthInSeconds;
-            
+
             tutorial.totalTime = DatetimeService.getHoursMinutesSeconds({totalSeconds: totalSeconds}).hoursMinutesSeconds;
           });
 
@@ -148,13 +148,13 @@ module.exports = {
           } else {
             averageRating = totalRating / tutorial.ratings.length;
           }
-          
+
           tutorial.averageRating = averageRating;
         });
 
         // The logged out case
         if (!req.session.userId) {
-          
+
           return res.view('profile', {
             // This is for the navigation bar
             me: null,
@@ -212,7 +212,7 @@ module.exports = {
           } else {
             me.isMe = false;
           }
-          
+
           // Return me property for the nav and the remaining properties for the profile page.
           return res.view('profile', {
             me: me,
@@ -246,7 +246,7 @@ module.exports = {
 
       // The logged out case
       if (!req.session.userId) {
-        
+
         return res.view('profile-followers', {
           // This is for the navigation bar
           me: null,
@@ -309,7 +309,7 @@ module.exports = {
         } else {
           me.isMe = false;
         }
-        
+
         // Return me property for the nav and the remaining properties for the profile page.
         return res.view('profile-followers', {
           me: me,
@@ -343,7 +343,7 @@ module.exports = {
 
       // The logged out case
       if (!req.session.userId) {
-        
+
         return res.view('profile-following', {
           // This is for the navigation bar
           me: null,
@@ -406,7 +406,7 @@ module.exports = {
         } else {
           me.isMe = false;
         }
-        
+
         // Return me property for the nav and the remaining properties for the profile page.
         return res.view('profile-following', {
           me: me,
@@ -543,7 +543,7 @@ module.exports = {
     })
     .populate('owner')
     .populate('videos')
-    .populate('ratings') 
+    .populate('ratings')
     .exec(function(err, foundTutorial){
       if (err) return res.negotiate(err);
       if (!foundTutorial) return res.notFound();
@@ -589,7 +589,7 @@ module.exports = {
 
             foundTutorial.totalTime = DatetimeService.getHoursMinutesSeconds({totalSeconds: totalSeconds}).hoursMinutesSeconds;
           });
-    
+
         // limit the owner attribute to the users name
         foundTutorial.owner = foundTutorial.owner.username;
 
@@ -615,7 +615,7 @@ module.exports = {
         // Given (e.g.):
         // tutorial.videoOrder= [3, 4, 5]
         // tutorial.videos = [{id: 5}, {id: 4}, {id: 3}]
-        // 
+        //
         // Yields (e.g.):
         // tutorial.videos <== [{id: 3}, {id: 4}, {id: 5}]
 
@@ -739,6 +739,7 @@ module.exports = {
   },
 
   newVideo: function(req, res) {
+    var MAX_NUM_VIDEOS_PER_TUTORIAL = 25;
 
     // Find the tutorial that will contain the added video
     Tutorial.findOne({
@@ -750,6 +751,10 @@ module.exports = {
     .exec(function (err, foundTutorial){
       if (err) return res.negotiate(err);
       if (!foundTutorial) return res.notFound();
+
+      if (foundTutorial.videos.length >= MAX_NUM_VIDEOS_PER_TUTORIAL) {
+        return res.badRequest("Tutorials may have no more than 25 videos");
+      }
 
       // Find the currently authenticated user
       User.findOne({
@@ -771,19 +776,19 @@ module.exports = {
         }
 
         /*
-            _____                     __                      
-           |_   _| __ __ _ _ __  ___ / _| ___  _ __ _ __ ___  
-             | || '__/ _` | '_ \/ __| |_ / _ \| '__| '_ ` _ \ 
+            _____                     __
+           |_   _| __ __ _ _ __  ___ / _| ___  _ __ _ __ ___
+             | || '__/ _` | '_ \/ __| |_ / _ \| '__| '_ ` _ \
              | || | | (_| | | | \__ \  _| (_) | |  | | | | | |
              |_||_|  \__,_|_| |_|___/_|  \___/|_|  |_| |_| |_|
-                                                    
+
         */
 
         // Transform the `created` attribute into time ago format
         foundTutorial.created = DatetimeService.getTimeAgo({date: foundTutorial.createdAt});
 
         /**********************************************************************************
-            Calculate the averge rating 
+            Calculate the averge rating
         **********************************************************************************/
 
         // Calculate the average of all existing ratings.
@@ -861,19 +866,19 @@ module.exports = {
         }
 
         /*
-            _____                     __                      
-           |_   _| __ __ _ _ __  ___ / _| ___  _ __ _ __ ___  
-             | || '__/ _` | '_ \/ __| |_ / _ \| '__| '_ ` _ \ 
+            _____                     __
+           |_   _| __ __ _ _ __  ___ / _| ___  _ __ _ __ ___
+             | || '__/ _` | '_ \/ __| |_ / _ \| '__| '_ ` _ \
              | || | | (_| | | | \__ \  _| (_) | |  | | | | | |
              |_||_|  \__,_|_| |_|___/_|  \___/|_|  |_| |_| |_|
-                                                    
+
         */
-       
+
         // Transform the `created` attribute into time ago format
         foundTutorial.created = DatetimeService.getTimeAgo({date: foundTutorial.createdAt});
-       
+
         /**********************************************************************************
-            Calculate the averge rating 
+            Calculate the averge rating
         **********************************************************************************/
 
         // Perform Average Ratings calculation if there are ratings
@@ -886,7 +891,7 @@ module.exports = {
           // Total the number of ratings for the Tutorial
           _.each(foundTutorial.ratings, function(rating){
 
-            sumTutorialRatings = sumTutorialRatings + rating.stars;  
+            sumTutorialRatings = sumTutorialRatings + rating.stars;
           });
 
           // Assign the average to the tutorial
@@ -909,14 +914,14 @@ module.exports = {
         });
 
         /*
-            _____                                      
-           |  __ \                                     
-           | |__) |___  ___ _ __   ___  _ __  ___  ___ 
+            _____
+           |  __ \
+           | |__) |___  ___ _ __   ___  _ __  ___  ___
            |  _  // _ \/ __| '_ \ / _ \| '_ \/ __|/ _ \
            | | \ \  __/\__ \ |_) | (_) | | | \__ \  __/
            |_|  \_\___||___/ .__/ \___/|_| |_|___/\___|
-                           | |                         
-                           |_|                                             
+                           | |
+                           |_|
          */
 
         return res.view('tutorials-detail-video-edit', {
@@ -976,14 +981,14 @@ module.exports = {
         if (err) return res.negotiate(err);
 
         /*
-            _____                                      
-           |  __ \                                     
-           | |__) |___  ___ _ __   ___  _ __  ___  ___ 
+            _____
+           |  __ \
+           | |__) |___  ___ _ __   ___  _ __  ___  ___
            |  _  // _ \/ __| '_ \ / _ \| '_ \/ __|/ _ \
            | | \ \  __/\__ \ |_) | (_) | | | \__ \  __/
            |_|  \_\___||___/ .__/ \___/|_| |_|___/\___|
-                           | |                         
-                           |_|                                             
+                           | |
+                           |_|
          */
 
         // If not logged in
